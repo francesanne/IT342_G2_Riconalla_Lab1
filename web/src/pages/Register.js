@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import authService from '../services/authService';
 
 const Register = () => {
@@ -32,6 +31,11 @@ const Register = () => {
       return;
     }
     
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
     setLoading(true);
     
     try {
@@ -41,7 +45,7 @@ const Register = () => {
         password: formData.password
       });
       
-      setSuccess('Registration successful! Redirecting to login...');
+      setSuccess('Account created successfully! Redirecting...');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
@@ -53,86 +57,94 @@ const Register = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="glass-card"
-    >
-      <h2 style={{ color: 'white', marginBottom: '30px', textAlign: 'center' }}>
-        Create Account
-      </h2>
-      
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-            minLength="3"
-            className="glass-input"
-          />
-        </div>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Create an account</h2>
+        <p className="auth-subtitle">Get started with your free account</p>
         
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="glass-input"
-          />
-        </div>
+        {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
         
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            minLength="6"
-            className="glass-input"
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="form-input"
+              placeholder="Choose a username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              minLength="3"
+              autoComplete="username"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">Email address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="form-input"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              autoComplete="email"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="form-input"
+              placeholder="Create a password (min. 6 characters)"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              minLength="6"
+              autoComplete="new-password"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="confirmPassword" className="form-label">Confirm password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              className="form-input"
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              autoComplete="new-password"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary"
+            disabled={loading}
+          >
+            {loading ? 'Creating account...' : 'Create account'}
+          </button>
+        </form>
         
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-            className="glass-input"
-          />
+        <div className="auth-footer">
+          Already have an account?{' '}
+          <Link to="/login" className="auth-link">
+            Sign in
+          </Link>
         </div>
-        
-        <button 
-          type="submit" 
-          className="gradient-btn"
-          disabled={loading}
-        >
-          {loading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
-      
-      <div style={{ marginTop: '20px', textAlign: 'center', color: 'white' }}>
-        Already have an account?{' '}
-        <Link to="/login" className="glass-link">
-          Login
-        </Link>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

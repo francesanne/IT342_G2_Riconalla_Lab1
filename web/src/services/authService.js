@@ -21,10 +21,10 @@ const register = async (userData) => {
     });
     
     if (response.data.success) {
-      // Don't store password hash in localStorage
       const userToStore = {
         id: response.data.userId,
-        email: response.data.email
+        email: response.data.email,
+        username: userData.username  // Store the username from registration
       };
       localStorage.setItem('user', JSON.stringify(userToStore));
     }
@@ -32,14 +32,10 @@ const register = async (userData) => {
   } catch (error) {
     console.error('Registration error:', error);
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       throw error.response.data.message || 'Registration failed';
     } else if (error.request) {
-      // The request was made but no response was received
       throw 'Network error - cannot connect to server';
     } else {
-      // Something happened in setting up the request that triggered an Error
       throw error.message;
     }
   }
@@ -57,7 +53,7 @@ const login = async (email, password) => {
       const userToStore = {
         id: response.data.userId,
         email: response.data.email,
-        username: response.data.username
+        username: response.data.username  // Make sure username is stored
       };
       localStorage.setItem('user', JSON.stringify(userToStore));
     }

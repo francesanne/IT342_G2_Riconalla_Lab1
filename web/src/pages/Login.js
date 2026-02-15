@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import authService from '../services/authService';
 
 const Login = () => {
@@ -35,59 +34,61 @@ const Login = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="glass-card"
-    >
-      <h2 style={{ color: 'white', marginBottom: '30px', textAlign: 'center' }}>
-        Welcome Back
-      </h2>
-      
-      {error && <div className="error-message">{error}</div>}
-      
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="glass-input"
-          />
-        </div>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Welcome back</h2>
+        <p className="auth-subtitle">Sign in to your account</p>
         
-        <div style={{ marginBottom: '20px' }}>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="glass-input"
-          />
-        </div>
+        {error && <div className="error-message">{error}</div>}
         
-        <button 
-          type="submit" 
-          className="gradient-btn"
-          disabled={loading}
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      
-      <div style={{ marginTop: '20px', textAlign: 'center', color: 'white' }}>
-        Don't have an account?{' '}
-        <Link to="/register" className="glass-link">
-          Register
-        </Link>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">Email address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="form-input"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              autoComplete="email"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="form-input"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
+        
+        <div className="auth-footer">
+          Don't have an account?{' '}
+          <Link to="/register" className="auth-link">
+            Create an account
+          </Link>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
