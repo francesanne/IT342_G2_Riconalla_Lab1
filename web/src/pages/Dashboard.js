@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import axios from 'axios';
 import authService from '../services/authService';
 
 const Dashboard = () => {
@@ -20,21 +18,8 @@ const Dashboard = () => {
         navigate('/login');
         return;
       }
-
-      // You'll need to implement this endpoint in backend
-      // For now, we'll use the stored user data
       setUser(currentUser);
       setLoading(false);
-      
-      // Uncomment when /api/user/me is ready:
-      /*
-      const response = await axios.get('http://localhost:8080/api/user/me', {
-        headers: {
-          'Authorization': `Basic ${btoa(currentUser.email + ':')}`
-        }
-      });
-      setUser(response.data);
-      */
     } catch (error) {
       console.error('Error fetching user:', error);
       navigate('/login');
@@ -48,77 +33,114 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="glass-card" style={{ textAlign: 'center' }}>
-        <p style={{ color: 'white' }}>Loading...</p>
+      <div className="loading-container">
+        <div className="loading-card">Loading your dashboard...</div>
       </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="glass-card"
-      style={{ maxWidth: '600px' }}
-    >
-      <h2 style={{ color: 'white', marginBottom: '30px', textAlign: 'center' }}>
-        Welcome to Your Dashboard
-      </h2>
-      
-      <div style={{ 
-        background: 'rgba(255, 255, 255, 0.1)', 
-        borderRadius: '15px', 
-        padding: '20px',
-        marginBottom: '30px'
-      }}>
-        <h3 style={{ color: 'white', marginBottom: '15px' }}>Profile Information</h3>
-        <p style={{ color: 'white', margin: '10px 0' }}>
-          <strong>User ID:</strong> {user?.id}
-        </p>
-        <p style={{ color: 'white', margin: '10px 0' }}>
-          <strong>Email:</strong> {user?.email}
-        </p>
-        <p style={{ color: 'white', margin: '10px 0' }}>
-          <strong>Status:</strong> <span style={{ color: '#4caf50' }}>● Active</span>
-        </p>
-      </div>
-
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-        gap: '15px',
-        marginBottom: '30px'
-      }}>
-        <div style={{ 
-          background: 'rgba(255, 255, 255, 0.1)', 
-          borderRadius: '10px', 
-          padding: '15px',
-          textAlign: 'center'
-        }}>
-          <h4 style={{ color: 'white', marginBottom: '5px' }}>Account Age</h4>
-          <p style={{ color: 'white', fontSize: '14px' }}>New User</p>
+    <div className="dashboard">
+      {/* Navigation Bar */}
+      <nav className="navbar">
+        <div className="navbar-content">
+          <div className="navbar-brand">
+            AuthSystem
+          </div>
+          <div className="navbar-user">
+            <span className="user-email">{user?.email}</span>
+            <button
+              onClick={handleLogout}
+              className="btn btn-secondary"
+              style={{ width: 'auto' }}
+            >
+              Sign out
+            </button>
+          </div>
         </div>
-        
-        <div style={{ 
-          background: 'rgba(255, 255, 255, 0.1)', 
-          borderRadius: '10px', 
-          padding: '15px',
-          textAlign: 'center'
-        }}>
-          <h4 style={{ color: 'white', marginBottom: '5px' }}>Last Login</h4>
-          <p style={{ color: 'white', fontSize: '14px' }}>Just now</p>
-        </div>
-      </div>
+      </nav>
 
-      <button 
-        onClick={handleLogout}
-        className="gradient-btn"
-        style={{ background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%)' }}
-      >
-        Logout
-      </button>
-    </motion.div>
+      {/* Main Content */}
+      <main className="dashboard-content">
+        {/* Welcome Section */}
+        <div className="welcome-section">
+          <h1 className="welcome-title">
+            Welcome back, {user?.username || 'User'}  {/* This will display the username */}
+          </h1>
+          <p className="welcome-subtitle">
+            Here's an overview of your account
+          </p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-label">Account status</div>
+            <div className="stat-value">
+              <span className="status-badge">
+                <span className="status-dot"></span>
+                Active
+              </span>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-label">Member since</div>
+            <div className="stat-value">
+              {new Date().toLocaleDateString('en-US', {
+                month: 'short',
+                year: 'numeric'
+              })}
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-label">Account ID</div>
+            <div className="stat-value" style={{ fontSize: '1rem', fontWeight: '500' }}>
+              {user?.id}
+            </div>
+          </div>
+        </div>
+
+        {/* Profile Section */}
+        <div className="profile-section">
+          <div className="profile-header">
+            <h3>Profile information</h3>
+          </div>
+          <div className="profile-content">
+            <div className="profile-grid">
+              <div className="profile-item">
+                <span className="profile-item-label">Username</span>
+                <span className="profile-item-value">
+                  {user?.username || 'Not set'}  {/* This will display the username */}
+                </span>
+              </div>
+
+              <div className="profile-item">
+                <span className="profile-item-label">Email address</span>
+                <span className="profile-item-value">
+                  {user?.email}
+                </span>
+              </div>
+
+              <div className="profile-item">
+                <span className="profile-item-label">Account type</span>
+                <span className="profile-item-value">
+                  Standard
+                </span>
+              </div>
+
+              <div className="profile-item">
+                <span className="profile-item-label">Last login</span>
+                <span className="profile-item-value">
+                  Just now
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 
