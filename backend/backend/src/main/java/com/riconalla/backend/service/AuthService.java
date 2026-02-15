@@ -2,20 +2,27 @@ package com.riconalla.backend.service;
 
 import com.riconalla.backend.model.User;
 import com.riconalla.backend.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User register(User user) {
+        // Check if user already exists
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        // Encrypt password
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
         return userRepository.save(user);
     }
@@ -28,5 +35,9 @@ public class AuthService {
         }
 
         return null;
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 }
