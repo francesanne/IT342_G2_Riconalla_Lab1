@@ -6,6 +6,9 @@ import com.riconalla.backend.model.User;
 import com.riconalla.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,17 +39,24 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             User user = authService.login(loginRequest.getEmail(), loginRequest.getPassword());
+
             if (user != null) {
-                return ResponseEntity.ok(new AuthResponse(
-                        "Login successful",
-                        user.getId(),
-                        user.getEmail()
-                ));
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Login successful");
+                response.put("userId", user.getId());
+                response.put("email", user.getEmail());
+                response.put("username", user.getUsername());  // Make sure this is included!
+                response.put("success", true);
+                return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.status(401).body("Invalid credentials");
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new AuthResponse("Invalid email or password"));
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new AuthResponse("Login failed: " + e.getMessage()));
         }
     }
 
